@@ -5,6 +5,18 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"type": "node",
+			"request": "launch",
+			"name": "Launch Tests",
+			"program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+			"cwd": "${workspaceFolder}",
+			"args": [
+				"--exit",
+				"dist/test.js"
+			],
+			"console": "integratedTerminal",
+		},
+		{
 			"type": "lldb",
 			"request": "launch",
 			"name": "Debug executable 'minpty'",
