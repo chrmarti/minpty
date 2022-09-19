@@ -15,6 +15,7 @@
 		"node": ">=14.14.0"
 	},
 	"scripts": {
+		"ci": "npm-run-all package test",
 		"test": "mocha --exit dist/test.js",
 		"compile": "npm-run-all tsc-b cargo-build",
 		"tsc-b": "tsc -b",
