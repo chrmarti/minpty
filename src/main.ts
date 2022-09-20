@@ -6,9 +6,11 @@
 import * as cp from 'child_process';
 import * as path from 'path';
 
+const minptyPath = path.join(__dirname, '..', 'target', 'release', 'minpty');
+
 export function execPty(cmd: string, args: string[]) {
 	return new Promise<string>((res, rej) => {
-		cp.execFile(path.join(__dirname, '..', 'target', 'release', 'minpty'), [ cmd, ...args ], (err, stdout, stderr) => {
+		cp.execFile(minptyPath, [ cmd, ...args ], (err, stdout, stderr) => {
 			if (err) {
 				rej(err);
 			} else {
@@ -16,4 +18,8 @@ export function execPty(cmd: string, args: string[]) {
 			}
 		});
 	});
+}
+
+export function spawnPty(cmd: string, args: string[]) {
+	return cp.spawn(minptyPath, [ cmd, ...args ]);
 }

@@ -7,7 +7,7 @@ extern crate libc;
 extern crate pty;
 
 use std::env;
-use std::io::Read;
+use std::io::{ self, Read, Write };
 use std::process::Command;
 
 use pty::fork::*;
@@ -15,14 +15,17 @@ use pty::fork::*;
 fn main() {
 	let fork = Fork::from_ptmx().unwrap();
 
-	if let Ok(mut parent) = fork.is_parent() {
-		let mut output = String::new();
+	if let Ok(mut child) = fork.is_parent() {
 
-		match parent.read_to_string(&mut output) {
-			Ok(_nread) => {
-				print!("{}", output);
-			},
-			Err(e) => panic!("read error: {}", e),
+		const BUFFER_LEN: usize = 512;
+		let mut buffer = [0u8; BUFFER_LEN];
+	
+		loop {
+			let read_count = child.read(&mut buffer).unwrap();
+			if read_count == 0 {
+				break;
+			}
+			io::stdout().write_all(&buffer[..read_count]).unwrap();
 		}
 	} else {
 		let args: Vec<String> = env::args().collect();
