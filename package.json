@@ -14,27 +14,29 @@
 	"engines": {
 		"node": ">=14.14.0"
 	},
+	"main": "dist/main.js",
 	"scripts": {
 		"ci": "npm-run-all package test",
 		"test": "mocha --exit dist/test.js",
 		"compile": "npm-run-all tsc-b cargo-build",
 		"tsc-b": "tsc -b",
-		"cargo-build": "cargo build --release",
+		"cargo-build": "cargo-cp-artifact -nc dist/lib.node -- cargo build --message-format=json-render-diagnostics --release",
 		"watch": "npm-run-all tsc-b-w",
 		"tsc-b-w": "tsc -b -w",
 		"package": "npm-run-all compile npm-pack",
 		"npm-pack": "npm pack",
 		"clean": "rimraf dist target"
-	},
+		},
 	"files": [
 		"LICENSE.txt",
 		"dist/main.js",
-		"target/release/minpty",
+		"dist/lib.node",
 		"package.json"
 	],
 	"devDependencies": {
 		"@types/mocha": "^9.1.0",
 		"@types/node": "^16.11.7",
+		"cargo-cp-artifact": "^0.1",
 		"mocha": "^9.2.1",
 		"npm-run-all": "^4.1.5",
 		"rimraf": "^3.0.2",
