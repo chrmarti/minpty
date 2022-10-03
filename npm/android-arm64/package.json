@@ -1,0 +1,31 @@
+{
+  "name": "minpty-android-arm64",
+  "version": "0.0.1",
+  "os": [
+    "android"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "minpty.android-arm64.node",
+  "files": [
+    "minpty.android-arm64.node"
+  ],
+  "description": "Run a command in a pseudo terminal",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrmarti/minpty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrmarti/minpty/issues"
+  }
+}

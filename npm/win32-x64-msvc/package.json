@@ -1,0 +1,31 @@
+{
+  "name": "minpty-win32-x64-msvc",
+  "version": "0.0.1",
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "minpty.win32-x64-msvc.node",
+  "files": [
+    "minpty.win32-x64-msvc.node"
+  ],
+  "description": "Run a command in a pseudo terminal",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrmarti/minpty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrmarti/minpty/issues"
+  }
+}

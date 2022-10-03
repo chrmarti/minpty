@@ -1,0 +1,31 @@
+{
+  "name": "minpty-android-arm-eabi",
+  "version": "0.0.1",
+  "os": [
+    "android"
+  ],
+  "cpu": [
+    "arm"
+  ],
+  "main": "minpty.android-arm-eabi.node",
+  "files": [
+    "minpty.android-arm-eabi.node"
+  ],
+  "description": "Run a command in a pseudo terminal",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrmarti/minpty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrmarti/minpty/issues"
+  }
+}

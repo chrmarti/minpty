@@ -1,0 +1,31 @@
+{
+  "name": "minpty-freebsd-x64",
+  "version": "0.0.1",
+  "os": [
+    "freebsd"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "minpty.freebsd-x64.node",
+  "files": [
+    "minpty.freebsd-x64.node"
+  ],
+  "description": "Run a command in a pseudo terminal",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrmarti/minpty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrmarti/minpty/issues"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "name": "minpty-linux-x64-gnu",
+  "version": "0.0.1",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "main": "minpty.linux-x64-gnu.node",
+  "files": [
+    "minpty.linux-x64-gnu.node"
+  ],
+  "description": "Run a command in a pseudo terminal",
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrmarti/minpty.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrmarti/minpty/issues"
+  },
+  "libc": [
+    "glibc"
+  ]
+}

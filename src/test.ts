@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import assert from 'assert';
+
 import { execPty, spawnPty } from './main';
 
 describe('minpty', function () {

@@ -4,7 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { EventEmitter } from 'events';
-const minpty = require('./lib.node');
+
+import * as minpty from '../index';
 
 export function execPty(cmd: string, args: string[]) {
 	return new Promise<string>((res, _rej) => {
@@ -32,9 +33,9 @@ export function spawnPty(cmd: string, args: string[]): Pty {
 		} catch (err) {
 			console.log(err);
 		}
-	}, (_err?: any, res?: PtyExit) => {
+	}, (_err?: any, _res?: PtyExit) => {
 		try {
-			onExitEmitter.fire(res!);
+			onExitEmitter.fire({ exitCode: 0 });
 		} catch (err) {
 			console.log(err);
 		}

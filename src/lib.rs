@@ -1,42 +1,36 @@
 extern crate libc;
 extern crate pty;
 
-use std::cell::RefCell;
 use std::io::Read;
 use std::process::Command;
 use std::str;
 
 use pty::fork::Fork;
 
-use neon::prelude::*;
-
-type BoxedPtyExec = JsBox<RefCell<PtyExec>>;
-
-struct PtyExec {
-}
-
-impl Finalize for PtyExec {}
+use napi::{
+	bindgen_prelude::*,
+	threadsafe_function::{ErrorStrategy, ThreadsafeFunction, ThreadsafeFunctionCallMode, ThreadSafeCallContext},
+};
+use napi_derive::napi;
 
 // node -p 'const minpty = require("./dist/lib.node"); const child = minpty.spawn("bash", ["-c", "ls --color=auto ; sleep 1s ; ls --color=auto"], s => console.log(">> " + s), res => console.log(res)); console.log("waiting...");'
 
-fn spawn(mut cx: FunctionContext) -> JsResult<BoxedPtyExec> {
-	let cmd = cx.argument::<JsString>(0)?.value(&mut cx);
-	let args = cx.argument::<JsArray>(1)?.to_vec(&mut cx).unwrap()
-		.iter()
-		.map(|arg| arg.downcast::<JsString, FunctionContext>(&mut cx).unwrap().value(&mut cx))
-		.collect::<Vec<String>>();
-	let on_data_cb = cx.argument::<JsFunction>(2)?.root(&mut cx);
-	let on_exit_cb = cx.argument::<JsFunction>(3)?.root(&mut cx);
-	let channel = cx.channel();
-	
+#[napi]
+pub fn spawn(cmd: String, args: Vec<String>, on_data_cb: JsFunction, on_exit_cb: JsFunction) {
+	let on_data_cb: ThreadsafeFunction<String, ErrorStrategy::Fatal> = on_data_cb
+	.create_threadsafe_function(0, |ctx: ThreadSafeCallContext<String>| {
+		ctx.env.create_string(ctx.value.as_str()).map(|v| vec![v])
+	}).unwrap();
+	let on_exit_cb: ThreadsafeFunction<u32, ErrorStrategy::Fatal> = on_exit_cb
+	.create_threadsafe_function(0, |ctx| {
+		ctx.env.create_uint32(ctx.value).map(|v| vec![v])
+	}).unwrap();
 	std::thread::spawn(move || {
-		run_pty(channel, cmd, args, on_data_cb, on_exit_cb);
+		run_pty(cmd, args, on_data_cb, on_exit_cb);
 	});
-	
-	Ok(cx.boxed(RefCell::new(PtyExec {})))
 }
 
-fn run_pty(channel: Channel, cmd: String, args: Vec<String>, mut on_data_cb: Root<JsFunction>, on_exit_cb: Root<JsFunction>) {
+fn run_pty(cmd: String, args: Vec<String>, on_data_cb: ThreadsafeFunction<String, ErrorStrategy::Fatal>, on_exit_cb: ThreadsafeFunction<u32, ErrorStrategy::Fatal>) {
 	let fork = Fork::from_ptmx().unwrap();
 	if let Ok(mut parent) = fork.is_parent() {
 		const BUFFER_LEN: usize = 512;
@@ -47,40 +41,18 @@ fn run_pty(channel: Channel, cmd: String, args: Vec<String>, mut on_data_cb: Roo
 			if read_count == 0 {
 				break;
 			}
-			on_data_cb = channel.send(move |mut cx| {
-				let on_data_cb = on_data_cb.into_inner(&mut cx);
-				let str = cx.string(str::from_utf8(&buffer[..read_count]).unwrap());
-				on_data_cb.call_with(&cx)
-					.arg(str)
-					.apply::<JsUndefined, TaskContext>(&mut cx)?;
-				
-				Ok(on_data_cb.root(&mut cx))
-			}).join().unwrap();
+			let str = str::from_utf8(&buffer[..read_count]).unwrap().to_string();
+			let res = on_data_cb.call(str, ThreadsafeFunctionCallMode::Blocking);
+			if res != Status::Ok {
+				break;
+			}
 		}
-
-		channel.send(move |mut cx| {
-			let on_exit_cb = on_exit_cb.into_inner(&mut cx);
-			let undefined = cx.undefined();
-			let res = cx.empty_object();
-			let exit_code = cx.number(0);
-			res.set(&mut cx, "exitCode", exit_code).unwrap();
-			on_exit_cb.call_with(&cx)
-				.arg(undefined)
-				.arg(res)
-				.apply::<JsUndefined, TaskContext>(&mut cx)?;
-			
-			Ok(())
-		}).join().unwrap();
+		
+		on_exit_cb.call(0, ThreadsafeFunctionCallMode::Blocking);
 	} else {
 		Command::new(cmd)
-			.args(args)
-			.status()
-			.expect("could not execute tty");
+		.args(args)
+		.status()
+		.expect("could not execute tty");
 	}
-}
-
-#[neon::main]
-fn main(mut cx: ModuleContext) -> NeonResult<()> {
-	cx.export_function("spawn", spawn)?;
-	Ok(())
 }

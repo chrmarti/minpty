@@ -15,5 +15,6 @@
 		"useUnknownInCatchVariables": false,
 		"newLine": "LF",
 		"sourceMap": true
-	}
+	},
+	"include": ["src/**/*"]
 }
